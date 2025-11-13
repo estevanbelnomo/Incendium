@@ -13,82 +13,201 @@
 </head>
 <body>
 	<div id="background" class="blackBackground">
-		<br />
-		<h3 id="title" class="hidden">INCENDIUM</h3>
-		<br />
+		<div class="game-container">
+			<!-- HEADER SECTION -->
+			<div class="header-section">
+				<h1 id="title" class="hidden">INCENDIUM</h1>
+			</div>
 
-		<!-- Fire Section -->
-		<button id="getFire" onclick="getFire()" class="hidden">Click To Get <span id="firePerClick">1</span> Fire Aspects!</button>
-		<br />
-		<span id="fireAspect" class="hidden">Fire Aspects: <span id="fireAspectNum">0</span></span>
-		<br />
-		<button id="sellFire" onclick="sellFire()" class="hidden">Click To Sell Your Fire Aspects! Sell Value: <span id="firePrice">0.5</span></button>
-		<br />
+			<!-- STATS BAR -->
+			<div class="stats-bar">
+				<div class="stat-item">
+					<div class="stat-label">💰 Money</div>
+					<div class="stat-value" id="moneyNum">0</div>
+					<div class="stat-subtext">Total Wealth</div>
+				</div>
 
-		<!-- Money Display -->
-		<span id="money" class="hidden">Money: <span id="moneyNum">0</span></span>
-		<br />
+				<div class="stat-item">
+					<div class="stat-label">🔥 Fire Aspects</div>
+					<div class="stat-value" id="fireAspectNum">0</div>
+					<div class="stat-subtext">+ <span id="firePerClick">1</span>/click</div>
+				</div>
 
-		<!-- Water Section (unlocked at Decision Level 4) -->
-		<button id="getWater" onclick="getWater()" class="hidden">Click To Get <span id="waterPerClick">1</span> Water Aspects!</button>
-		<br />
-		<span id="waterAspect" class="hidden">Water Aspects: <span id="waterNum">0</span></span>
-		<br />
-		<button id="sellWater" onclick="sellWater()" class="hidden">Click To Sell Your Water Aspects! Sell Value: <span id="waterPrice">0.5</span></button>
-		<br />
+				<div class="stat-item" id="waterStatItem" style="display:none;">
+					<div class="stat-label">💧 Water Aspects</div>
+					<div class="stat-value" id="waterNum">0</div>
+					<div class="stat-subtext">+ <span id="waterPerClick">1</span>/click</div>
+				</div>
 
-		<!-- Mana Display -->
-		<span id="manaDisplay" class="hidden">Mana: <span id="manaNum">0/100</span></span>
-		<br />
+				<div class="stat-item" id="manaStatItem" style="display:none;">
+					<div class="stat-label">✨ Mana Pool</div>
+					<div class="stat-value" id="manaNum">0/100</div>
+					<div class="progress-container">
+						<div class="progress-bar">
+							<div class="progress-fill" id="manaProgress" style="width: 0%"></div>
+						</div>
+					</div>
+				</div>
 
-		<!-- Initial Shop Button -->
-		<button onclick="buyShop()" id="buyShop" class="btn-deafult">Click To Buy Shop. Cost: 1000 Money</button>
-		<br />
+				<div class="stat-item" id="progressStatItem" style="display:none;">
+					<div class="stat-label">📈 Progress</div>
+					<div class="stat-value" id="decisionLevelDisplay">0/4</div>
+					<div class="progress-container">
+						<div class="progress-bar">
+							<div class="progress-fill" id="progressBar" style="width: 0%"></div>
+						</div>
+					</div>
+				</div>
 
-		<!-- Decision Making Upgrades -->
-		<button onclick="decisionUpgrade()" id="decisionUpgrade" class="hidden">Click To Upgrade Your Decision Making Skills! Cost: <span id="decisionCost">10</span></button>
-		<br />
+				<div class="stat-item" id="passiveRateItem" style="display:none;">
+					<div class="stat-label">⚙️ Passive Rate</div>
+					<div class="stat-value"><span id="passiveFireRate">0</span>🔥/s</div>
+					<div class="stat-subtext"><span id="passiveWaterRate">0</span>💧/s</div>
+				</div>
+			</div>
 
-		<!-- Fire Upgrades -->
-		<button onclick="upgradeFirePrice()" id="upgradeFirePrice" class="hidden">Click To Increase Fire Aspect Value! Cost: <span id="upgradeFirePriceCost">20</span></button>
-		<br />
-		<button onclick="upgradeFirePerClick()" id="upgradeFirePerClick" class="hidden">Click To Improve How Many Fire Aspects You Get Per Click! Cost: <span id="upgradeFirePerClickCost">100</span></button>
-		<br />
+			<!-- MAIN CONTENT GRID -->
+			<div class="content-grid">
 
-		<!-- Button Graphics Upgrades -->
-		<button onclick="upgradeButtonAPI()" id="upgradeButtonAPI" class="hidden">Click To Improve The Button Graphics! Cost: 200</button>
-		<br />
-		<button onclick="upgradeButtonAPI2()" id="upgradeButtonAPI2" class="hidden">Click To Further Improve The Button Graphics! Cost: 1000</button>
-		<br />
+				<!-- INITIAL SHOP SECTION -->
+				<div class="button-section" id="shopSection">
+					<div class="section-title">🛍️ Start Game</div>
+					<button onclick="buyShop()" id="buyShop" class="btn-primary">
+						Start Game
+						<br><small>Receive: 1000 Money</small>
+					</button>
+				</div>
 
-		<!-- Hire Wizard (unlocked at Decision Level 3) -->
-		<button onclick="hireWizard()" id="hireWizard" class="hidden">Click To Hire A Wizard! Cost: <span id="wizardCost">50000</span> Money + 20 Mana. Passive Fire: <span id="passiveFireRate">0</span>/sec</button>
-		<br />
+				<!-- FIRE SECTION -->
+				<div class="button-section" id="fireSection" style="display:none;">
+					<div class="section-title">🔥 Fire Aspects</div>
+					<div class="button-group">
+						<button id="getFire" onclick="getFire()" class="btn-primary">
+							Get <span id="firePerClickBtn">1</span> Fire Aspects
+						</button>
+						<button id="sellFire" onclick="sellFire()" class="btn-primary">
+							Sell Fire Aspects
+							<br><small>Value: <span id="firePrice">0.5</span> each</small>
+						</button>
+					</div>
+				</div>
 
-		<!-- Mana Upgrades (unlocked at Decision Level 4) -->
-		<button onclick="buyManaPool()" id="manaPool" class="hidden">Expand Mana Pool! Cost: <span id="manaPoolCost">500</span> Money + 10 Mana</button>
-		<br />
-		<button onclick="upgradeManaRegen()" id="manaRegen" class="hidden">Upgrade Mana Regeneration! Cost: <span id="manaRegenCost">100</span> Money + 5 Mana</button>
-		<br />
+				<!-- WATER SECTION -->
+				<div class="button-section" id="waterSection" style="display:none;">
+					<div class="section-title">💧 Water Aspects</div>
+					<div class="button-group">
+						<button id="getWater" onclick="getWater()" class="btn-secondary">
+							Get <span id="waterPerClickBtn">1</span> Water Aspects
+						</button>
+						<button id="sellWater" onclick="sellWater()" class="btn-secondary">
+							Sell Water Aspects
+							<br><small>Value: <span id="waterPrice">0.5</span> each</small>
+						</button>
+						<button id="upgradeWaterPrice" onclick="upgradeWaterPrice()" class="btn-secondary">
+							Increase Water Value
+							<br><small>Cost: 20</small>
+						</button>
+						<button id="upgradeWaterPerClick" onclick="upgradeWaterPerClick()" class="btn-secondary">
+							Water Click Power
+							<br><small>Cost: <span id="upgradeWaterPerClickCost">150</span></small>
+						</button>
+					</div>
+				</div>
 
-		<!-- Water Upgrades (unlocked at Decision Level 4) -->
-		<button onclick="upgradeWaterPrice()" id="upgradeWaterPrice" class="hidden">Click To Increase Water Aspect Value! Cost: 20 Money</button>
-		<br />
-		<button onclick="upgradeWaterPerClick()" id="upgradeWaterPerClick" class="hidden">Click To Improve How Many Water Aspects You Get Per Click! Cost: <span id="upgradeWaterPerClickCost">150</span></button>
-		<br />
+				<!-- FIRE UPGRADES SECTION -->
+				<div class="button-section" id="fireUpgradesSection" style="display:none;">
+					<div class="section-title">📈 Fire Upgrades</div>
+					<div class="button-group">
+						<button id="upgradeFirePrice" onclick="upgradeFirePrice()" class="btn-primary">
+							Fire Sell Price
+							<br><small>Cost: <span id="upgradeFirePriceCost">20</span></small>
+						</button>
+						<button id="upgradeFirePerClick" onclick="upgradeFirePerClick()" class="btn-primary">
+							Fire Click Power
+							<br><small>Cost: <span id="upgradeFirePerClickCost">100</span></small>
+						</button>
+					</div>
+				</div>
 
-		<!-- Fire vs Water Balance Controls (unlocked at Decision Level 4) -->
-		<button onclick="balanceTowardFire()" id="balanceFireBtn" class="hidden">Balance Toward Fire! Cost: 10 Mana</button>
-		<br />
-		<button onclick="balanceTowardWater()" id="balanceWaterBtn" class="hidden">Balance Toward Water! Cost: 10 Mana</button>
-		<br />
-		<span id="balanceDisplay" class="hidden">Fire/Water Balance: <span id="fireWaterBalanceNum">50</span>/100</span>
-		<br />
+				<!-- PROGRESSION SECTION -->
+				<div class="button-section" id="progressionSection" style="display:none;">
+					<div class="section-title">🎯 Progression</div>
+					<div class="button-group">
+						<button id="decisionUpgrade" onclick="decisionUpgrade()" class="btn-accent">
+							Unlock New Features
+							<br><small>Cost: <span id="decisionCost">10</span></small>
+						</button>
+						<div id="progressMessage" class="text-display" style="display:none; margin-top:10px;"></div>
+					</div>
+				</div>
 
-		<div id="makeBackgroundFullScreen"></div>
+				<!-- WIZARD & PASSIVE SECTION -->
+				<div class="button-section" id="wizardSection" style="display:none;">
+					<div class="section-title">🧙 Passive Income</div>
+					<div class="button-group">
+						<button id="hireWizard" onclick="hireWizard()" class="btn-accent">
+							Hire Wizard
+							<br><small>Cost: <span id="wizardCost">50000</span> + 20 Mana</small>
+						</button>
+						<div class="text-display">
+							Passive Fire: <span id="passiveFireRateDisplay">0</span>/sec
+						</div>
+					</div>
+				</div>
+
+				<!-- MANA SYSTEM SECTION -->
+				<div class="button-section" id="manaSection" style="display:none;">
+					<div class="section-title">✨ Mana System</div>
+					<div class="button-group">
+						<button id="manaPool" onclick="buyManaPool()" class="btn-accent">
+							Expand Mana Pool
+							<br><small>Cost: <span id="manaPoolCost">500</span> + 10 Mana</small>
+						</button>
+						<button id="manaRegen" onclick="upgradeManaRegen()" class="btn-accent">
+							Upgrade Mana Regen
+							<br><small>Cost: <span id="manaRegenCost">100</span> + 5 Mana</small>
+						</button>
+					</div>
+				</div>
+
+				<!-- BALANCE SYSTEM SECTION -->
+				<div class="button-section" id="balanceSection" style="display:none;">
+					<div class="section-title">⚖️ Fire vs Water</div>
+					<div class="text-display balance">
+						Balance: <span id="fireWaterBalanceNum">50</span>/100 (🔥 Favor)
+					</div>
+					<div class="button-group">
+						<button id="balanceFireBtn" onclick="balanceTowardFire()" class="btn-primary">
+							Favor Fire
+							<br><small>Cost: 10 Mana</small>
+						</button>
+						<button id="balanceWaterBtn" onclick="balanceTowardWater()" class="btn-secondary">
+							Favor Water
+							<br><small>Cost: 10 Mana</small>
+						</button>
+					</div>
+				</div>
+
+				<!-- COSMETICS SECTION -->
+				<div class="button-section" id="cosmeticsSection" style="display:none;">
+					<div class="section-title">🎨 Cosmetics</div>
+					<div class="button-group">
+						<button id="upgradeButtonAPI" onclick="upgradeButtonAPI()" class="btn-success">
+							Colorize UI
+							<br><small>Cost: 200</small>
+						</button>
+						<button id="upgradeButtonAPI2" onclick="upgradeButtonAPI2()" class="btn-success">
+							Enhance Graphics
+							<br><small>Cost: 1000</small>
+						</button>
+					</div>
+				</div>
+
+			</div>
+		</div>
 	</div>
 
-    	<script type="text/javascript" src="main.js"></script>
+    <script type="text/javascript" src="main.js"></script>
 </body>
 
 <!--
