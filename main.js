@@ -86,59 +86,87 @@ function loadGame() {
 
 // Game loop for passive generation
 function gameLoop() {
-    // Passive fire generation
-    fire += passiveFireRate / 20; // 20 ticks per second
+    try {
+        // Passive fire generation
+        fire += passiveFireRate / 20; // 20 ticks per second
 
-    // Passive water generation
-    water += passiveWaterRate / 20;
+        // Passive water generation
+        water += passiveWaterRate / 20;
 
-    // Mana regeneration (capped at manaMax)
-    if (mana < manaMax) {
-        mana = Math.min(manaMax, mana + manaRegenRate / 20);
+        // Mana regeneration (capped at manaMax)
+        if (mana < manaMax) {
+            mana = Math.min(manaMax, mana + manaRegenRate / 20);
+        }
+
+        refreshUI();
+    } catch (e) {
+        console.error("Error in gameLoop:", e);
     }
-
-    refreshUI();
 }
 
 // Refresh all UI elements
 function refreshUI() {
-    refreshMoney();
+    try {
+        refreshMoney();
 
-    // Update resource displays
-    document.getElementById("fireAspectNum").innerHTML = Math.floor(fire);
-    document.getElementById("waterNum").innerHTML = Math.floor(water);
-    document.getElementById("manaNum").innerHTML = Math.floor(mana) + "/" + manaMax;
+        // Update resource displays (check if elements exist)
+        var fireAspectNum = document.getElementById("fireAspectNum");
+        if (fireAspectNum) fireAspectNum.innerHTML = Math.floor(fire);
 
-    // Update passive rate display
-    document.getElementById("passiveFireRate").innerHTML = Math.floor(passiveFireRate);
-    document.getElementById("passiveFireRateDisplay").innerHTML = Math.floor(passiveFireRate);
-    document.getElementById("passiveWaterRate").innerHTML = Math.floor(passiveWaterRate);
+        var waterNum = document.getElementById("waterNum");
+        if (waterNum) waterNum.innerHTML = Math.floor(water);
 
-    // Format large numbers for display
-    if (money >= 1000) {
-        document.getElementById("moneyNum").innerHTML = formatNumber(money);
-    } else {
-        document.getElementById("moneyNum").innerHTML = Math.floor(money);
+        var manaNum = document.getElementById("manaNum");
+        if (manaNum) manaNum.innerHTML = Math.floor(mana) + "/" + manaMax;
+
+        // Update passive rate display
+        var passiveFireRateEl = document.getElementById("passiveFireRate");
+        if (passiveFireRateEl) passiveFireRateEl.innerHTML = Math.floor(passiveFireRate);
+
+        var passiveFireRateDisplayEl = document.getElementById("passiveFireRateDisplay");
+        if (passiveFireRateDisplayEl) passiveFireRateDisplayEl.innerHTML = Math.floor(passiveFireRate);
+
+        var passiveWaterRateEl = document.getElementById("passiveWaterRate");
+        if (passiveWaterRateEl) passiveWaterRateEl.innerHTML = Math.floor(passiveWaterRate);
+
+        // Format large numbers for display
+        var moneyNum = document.getElementById("moneyNum");
+        if (moneyNum) {
+            if (money >= 1000) {
+                moneyNum.innerHTML = formatNumber(money);
+            } else {
+                moneyNum.innerHTML = Math.floor(money);
+            }
+        }
+
+        // Update progress bars
+        updateProgressBars();
+    } catch (e) {
+        console.error("Error in refreshUI:", e);
     }
-
-    // Update progress bars
-    updateProgressBars();
 }
 
 // Start the game loop
 window.addEventListener('load', function() {
     var hasLoaded = loadGame();
     if (hasLoaded) {
-        document.getElementById("buyShop").className += " hidden";
-        document.getElementById("background").className = "whiteBackground";
+        // Hide shop section and show game UI for loaded games
+        document.getElementById("shopSection").style.display = "none";
+        document.getElementById("title").style.display = "";
         if (colour === "true") {
             addColour();
         }
         showUIBasedOnProgress();
+        refreshUI();
+    } else {
+        // For new games, show the start screen
+        document.getElementById("shopSection").style.display = "";
     }
 
-    // Set up autosave
-    setInterval(saveGame, SAVE_INTERVAL);
+    // Set up autosave (wait 2 seconds before first save)
+    setTimeout(function() {
+        setInterval(saveGame, SAVE_INTERVAL);
+    }, 2000);
 
     // Set up game loop
     setInterval(gameLoop, 50); // 20 ticks per second
