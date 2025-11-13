@@ -1,6 +1,139 @@
 //Creates Variable List For Future Use.
 var money=0,fire=0,firePrice=0.5,decisionLevel=0,decisionCost=10,upgradeFirePriceCost=20,firePerClick=1,upgradeFirePerClickCost=100,colour="false",bootstrap="false";
 
+// New game systems
+var water=0,waterPrice=0.5,mana=0,manaMax=100,manaRegenRate=1,passiveFireRate=0,passiveWaterRate=0,wizardsHired=0,wizardCost=50000;
+var waterPerClick=1,upgradeWaterPerClickCost=150;
+var manaPoolCost=500,manaRegenCost=100,fireWaterBalance=50;
+
+// Save/Load system
+var SAVE_INTERVAL = 5000; // Save every 5 seconds
+var gameStartTime = Date.now();
+
+// Number formatting function
+function formatNumber(num) {
+    if (num < 1000) return Math.floor(num);
+    if (num < 1000000) return (num / 1000).toFixed(2) + 'K';
+    if (num < 1000000000) return (num / 1000000).toFixed(2) + 'M';
+    if (num < 1000000000000) return (num / 1000000000).toFixed(2) + 'B';
+    if (num < 1000000000000000) return (num / 1000000000000).toFixed(2) + 'T';
+    return (num / 1000000000000000).toFixed(2) + 'Q';
+}
+
+// Save game to localStorage
+function saveGame() {
+    var gameState = {
+        money: money,
+        fire: fire,
+        firePrice: firePrice,
+        decisionLevel: decisionLevel,
+        decisionCost: decisionCost,
+        upgradeFirePriceCost: upgradeFirePriceCost,
+        firePerClick: firePerClick,
+        upgradeFirePerClickCost: upgradeFirePerClickCost,
+        colour: colour,
+        water: water,
+        waterPrice: waterPrice,
+        waterPerClick: waterPerClick,
+        upgradeWaterPerClickCost: upgradeWaterPerClickCost,
+        mana: mana,
+        manaMax: manaMax,
+        manaRegenRate: manaRegenRate,
+        passiveFireRate: passiveFireRate,
+        passiveWaterRate: passiveWaterRate,
+        wizardsHired: wizardsHired,
+        wizardCost: wizardCost,
+        fireWaterBalance: fireWaterBalance,
+        manaPoolCost: manaPoolCost,
+        manaRegenCost: manaRegenCost
+    };
+    localStorage.setItem('incendiumSave', JSON.stringify(gameState));
+}
+
+// Load game from localStorage
+function loadGame() {
+    var saved = localStorage.getItem('incendiumSave');
+    if (saved) {
+        var gameState = JSON.parse(saved);
+        money = gameState.money || 0;
+        fire = gameState.fire || 0;
+        firePrice = gameState.firePrice || 0.5;
+        decisionLevel = gameState.decisionLevel || 0;
+        decisionCost = gameState.decisionCost || 10;
+        upgradeFirePriceCost = gameState.upgradeFirePriceCost || 20;
+        firePerClick = gameState.firePerClick || 1;
+        upgradeFirePerClickCost = gameState.upgradeFirePerClickCost || 100;
+        colour = gameState.colour || "false";
+        water = gameState.water || 0;
+        waterPrice = gameState.waterPrice || 0.5;
+        waterPerClick = gameState.waterPerClick || 1;
+        upgradeWaterPerClickCost = gameState.upgradeWaterPerClickCost || 150;
+        mana = gameState.mana || 0;
+        manaMax = gameState.manaMax || 100;
+        manaRegenRate = gameState.manaRegenRate || 1;
+        passiveFireRate = gameState.passiveFireRate || 0;
+        passiveWaterRate = gameState.passiveWaterRate || 0;
+        wizardsHired = gameState.wizardsHired || 0;
+        wizardCost = gameState.wizardCost || 50000;
+        fireWaterBalance = gameState.fireWaterBalance || 50;
+        manaPoolCost = gameState.manaPoolCost || 500;
+        manaRegenCost = gameState.manaRegenCost || 100;
+        refreshUI();
+        return true;
+    }
+    return false;
+}
+
+// Game loop for passive generation
+function gameLoop() {
+    // Passive fire generation
+    fire += passiveFireRate / 20; // 20 ticks per second
+
+    // Passive water generation
+    water += passiveWaterRate / 20;
+
+    // Mana regeneration (capped at manaMax)
+    if (mana < manaMax) {
+        mana = Math.min(manaMax, mana + manaRegenRate / 20);
+    }
+
+    refreshUI();
+}
+
+// Refresh all UI elements
+function refreshUI() {
+    refreshMoney();
+    document.getElementById("fireAspectNum").innerHTML = Math.floor(fire);
+    document.getElementById("waterNum").innerHTML = Math.floor(water);
+    document.getElementById("manaNum").innerHTML = Math.floor(mana) + "/" + manaMax;
+
+    // Format large numbers for display
+    if (money >= 1000) {
+        document.getElementById("moneyNum").innerHTML = formatNumber(money);
+    } else {
+        document.getElementById("moneyNum").innerHTML = Math.floor(money);
+    }
+}
+
+// Start the game loop
+window.addEventListener('load', function() {
+    var hasLoaded = loadGame();
+    if (hasLoaded) {
+        document.getElementById("buyShop").className += " hidden";
+        document.getElementById("background").className = "whiteBackground";
+        if (colour === "true") {
+            addColour();
+        }
+        showUIBasedOnProgress();
+    }
+
+    // Set up autosave
+    setInterval(saveGame, SAVE_INTERVAL);
+
+    // Set up game loop
+    setInterval(gameLoop, 50); // 20 ticks per second
+});
+
 // When Buy Shop button is pressed at start of the game, this triggers.
 function buyShop() {
     var loanChoice = prompt("Oh! It Does Not Look Like You Have Any Money! Here, I'll give you a loan! Is 1000 okay, or would you like 50000?");
@@ -9,13 +142,17 @@ function buyShop() {
         var loanChoice2 = prompt("Great! And When Would You Like To Pay Off The Loan? ASAP or Never?");
         if(loanChoice2 === "ASAP"){
             alert("OK Then! Let's Get Started!");
+            money = 1000;
             document.getElementById("buyShop").className += " hidden";
             document.getElementById("background").className = "whiteBackground";
+            document.getElementById("title").className = "";
             document.getElementById("getFire").className = "";
             document.getElementById("money").className = "";
             document.getElementById("fireAspect").className = "";
             document.getElementById("sellFire").className = "";
             document.getElementById("decisionUpgrade").className = "";
+            document.getElementById("manaDisplay").className = "";
+            refreshUI();
             return;
         }
         if(loanChoice2 === "Never"){
@@ -52,7 +189,16 @@ function sellFire(){
 
 //Refreshes the money onscreen.
 function refreshMoney(){
-    document.getElementById("moneyNum").innerHTML = money;
+    if (money >= 1000) {
+        document.getElementById("moneyNum").innerHTML = formatNumber(money);
+    } else {
+        document.getElementById("moneyNum").innerHTML = Math.floor(money);
+    }
+
+    // Update balance display
+    if (document.getElementById("fireWaterBalanceNum")) {
+        document.getElementById("fireWaterBalanceNum").innerHTML = Math.floor(fireWaterBalance);
+    }
 }
 
 //Handles unlocking more content with a special output each time the user buys the upgrade.
@@ -124,12 +270,123 @@ function addColour(){
     document.getElementById("upgradeFirePrice").className = "blueBackground";
     document.getElementById("upgradeFirePerClick").className = "blueBackground";
     document.getElementById("upgradeButtonAPI2").className = "yellowBackground";
-    //document.getElementById("").className = ;
-    //document.getElementById("").className = ;
-    //document.getElementById("").className = ;
-    //document.getElementById("").className = ;
-    //document.getElementById("").className = ;
-    //document.getElementById("").className = ;
-    //document.getElementById("").className = ;
-    //document.getElementById("").className = ;
+}
+
+// Function to show/hide UI based on progression
+function showUIBasedOnProgress() {
+    if (decisionLevel > 0) {
+        document.getElementById("upgradeFirePrice").className = "";
+    }
+    if (decisionLevel > 1) {
+        document.getElementById("upgradeFirePerClick").className = "";
+    }
+    if (decisionLevel > 2) {
+        document.getElementById("upgradeButtonAPI").className = "";
+        document.getElementById("hireWizard").className = "";
+    }
+    if (decisionLevel > 3) {
+        document.getElementById("getWater").className = "";
+        document.getElementById("sellWater").className = "";
+        document.getElementById("manaPool").className = "";
+    }
+}
+
+// Water aspect functions
+function getWater() {
+    water += waterPerClick;
+    document.getElementById("waterNum").innerHTML = Math.floor(water);
+}
+
+function sellWater() {
+    money += water * waterPrice;
+    water = 0;
+    document.getElementById("waterNum").innerHTML = Math.floor(water);
+    refreshMoney();
+}
+
+function upgradeWaterPrice() {
+    if (money >= 20) {
+        money -= 20;
+        waterPrice *= 1.5;
+        refreshMoney();
+        document.getElementById("upgradeWaterPriceCost").innerHTML = Math.floor(20);
+    }
+}
+
+function upgradeWaterPerClick() {
+    if (money >= upgradeWaterPerClickCost) {
+        money -= upgradeWaterPerClickCost;
+        upgradeWaterPerClickCost *= 2;
+        waterPerClick *= 2;
+        refreshMoney();
+        document.getElementById("upgradeWaterPerClickCost").innerHTML = Math.floor(upgradeWaterPerClickCost);
+        document.getElementById("waterPerClick").innerHTML = waterPerClick;
+    }
+}
+
+// Mana system functions
+function buyManaPool() {
+    if (money >= manaPoolCost && mana >= 10) {
+        money -= manaPoolCost;
+        manaMax += 50;
+        manaPoolCost *= 1.5;
+        mana = Math.min(mana, manaMax);
+        refreshMoney();
+        document.getElementById("manaPoolCost").innerHTML = Math.floor(manaPoolCost);
+        document.getElementById("manaNum").innerHTML = Math.floor(mana) + "/" + manaMax;
+    }
+}
+
+function upgradeManaRegen() {
+    if (money >= manaRegenCost && mana >= 5) {
+        money -= manaRegenCost;
+        manaRegenRate += 0.5;
+        manaRegenCost *= 1.5;
+        refreshMoney();
+        document.getElementById("manaRegenCost").innerHTML = Math.floor(manaRegenCost);
+    }
+}
+
+// Hire wizard for passive fire generation
+function hireWizard() {
+    if (money >= wizardCost && mana >= 20) {
+        money -= wizardCost;
+        mana -= 20;
+        wizardsHired += 1;
+        passiveFireRate += 50;
+        wizardCost *= 1.25;
+        refreshMoney();
+        document.getElementById("wizardCost").innerHTML = Math.floor(wizardCost);
+        document.getElementById("passiveFireRate").innerHTML = Math.floor(passiveFireRate);
+    }
+}
+
+// Upgrade button graphics (second level)
+function upgradeButtonAPI2() {
+    if (money >= 1000) {
+        money -= 1000;
+        document.getElementById("upgradeButtonAPI2").className = "purpleBackground";
+        refreshMoney();
+    }
+}
+
+// Water vs Fire balance mechanic
+function balanceTowardFire() {
+    if (fireWaterBalance < 100 && mana >= 10) {
+        mana -= 10;
+        fireWaterBalance += 5;
+        passiveFireRate += 10;
+        passiveWaterRate = Math.max(0, passiveWaterRate - 5);
+        refreshMoney();
+    }
+}
+
+function balanceTowardWater() {
+    if (fireWaterBalance > 0 && mana >= 10) {
+        mana -= 10;
+        fireWaterBalance -= 5;
+        passiveWaterRate += 10;
+        passiveFireRate = Math.max(0, passiveFireRate - 5);
+        refreshMoney();
+    }
 }

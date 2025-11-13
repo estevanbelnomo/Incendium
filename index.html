@@ -14,26 +14,77 @@
 <body>
 	<div id="background" class="blackBackground">
 		<br />
-		<button id="getFire" onclick="getFire(1)" class="hidden">Click To Get <span id="firePerClick">1</span> Fire Aspects!</button>
+		<h3 id="title" class="hidden">INCENDIUM</h3>
 		<br />
-		<span id="fireAspect"class="hidden">Fire Aspects: <span id="fireAspectNum">0</span></span>
+
+		<!-- Fire Section -->
+		<button id="getFire" onclick="getFire()" class="hidden">Click To Get <span id="firePerClick">1</span> Fire Aspects!</button>
+		<br />
+		<span id="fireAspect" class="hidden">Fire Aspects: <span id="fireAspectNum">0</span></span>
 		<br />
 		<button id="sellFire" onclick="sellFire()" class="hidden">Click To Sell Your Fire Aspects! Sell Value: <span id="firePrice">0.5</span></button>
 		<br />
+
+		<!-- Money Display -->
 		<span id="money" class="hidden">Money: <span id="moneyNum">0</span></span>
 		<br />
+
+		<!-- Water Section (unlocked at Decision Level 4) -->
+		<button id="getWater" onclick="getWater()" class="hidden">Click To Get <span id="waterPerClick">1</span> Water Aspects!</button>
+		<br />
+		<span id="waterAspect" class="hidden">Water Aspects: <span id="waterNum">0</span></span>
+		<br />
+		<button id="sellWater" onclick="sellWater()" class="hidden">Click To Sell Your Water Aspects! Sell Value: <span id="waterPrice">0.5</span></button>
+		<br />
+
+		<!-- Mana Display -->
+		<span id="manaDisplay" class="hidden">Mana: <span id="manaNum">0/100</span></span>
+		<br />
+
+		<!-- Initial Shop Button -->
 		<button onclick="buyShop()" id="buyShop" class="btn-deafult">Click To Buy Shop. Cost: 1000 Money</button>
 		<br />
+
+		<!-- Decision Making Upgrades -->
 		<button onclick="decisionUpgrade()" id="decisionUpgrade" class="hidden">Click To Upgrade Your Decision Making Skills! Cost: <span id="decisionCost">10</span></button>
 		<br />
+
+		<!-- Fire Upgrades -->
 		<button onclick="upgradeFirePrice()" id="upgradeFirePrice" class="hidden">Click To Increase Fire Aspect Value! Cost: <span id="upgradeFirePriceCost">20</span></button>
 		<br />
 		<button onclick="upgradeFirePerClick()" id="upgradeFirePerClick" class="hidden">Click To Improve How Many Fire Aspects You Get Per Click! Cost: <span id="upgradeFirePerClickCost">100</span></button>
 		<br />
+
+		<!-- Button Graphics Upgrades -->
 		<button onclick="upgradeButtonAPI()" id="upgradeButtonAPI" class="hidden">Click To Improve The Button Graphics! Cost: 200</button>
 		<br />
 		<button onclick="upgradeButtonAPI2()" id="upgradeButtonAPI2" class="hidden">Click To Further Improve The Button Graphics! Cost: 1000</button>
 		<br />
+
+		<!-- Hire Wizard (unlocked at Decision Level 3) -->
+		<button onclick="hireWizard()" id="hireWizard" class="hidden">Click To Hire A Wizard! Cost: <span id="wizardCost">50000</span> Money + 20 Mana. Passive Fire: <span id="passiveFireRate">0</span>/sec</button>
+		<br />
+
+		<!-- Mana Upgrades (unlocked at Decision Level 4) -->
+		<button onclick="buyManaPool()" id="manaPool" class="hidden">Expand Mana Pool! Cost: <span id="manaPoolCost">500</span> Money + 10 Mana</button>
+		<br />
+		<button onclick="upgradeManaRegen()" id="manaRegen" class="hidden">Upgrade Mana Regeneration! Cost: <span id="manaRegenCost">100</span> Money + 5 Mana</button>
+		<br />
+
+		<!-- Water Upgrades (unlocked at Decision Level 4) -->
+		<button onclick="upgradeWaterPrice()" id="upgradeWaterPrice" class="hidden">Click To Increase Water Aspect Value! Cost: 20 Money</button>
+		<br />
+		<button onclick="upgradeWaterPerClick()" id="upgradeWaterPerClick" class="hidden">Click To Improve How Many Water Aspects You Get Per Click! Cost: <span id="upgradeWaterPerClickCost">150</span></button>
+		<br />
+
+		<!-- Fire vs Water Balance Controls (unlocked at Decision Level 4) -->
+		<button onclick="balanceTowardFire()" id="balanceFireBtn" class="hidden">Balance Toward Fire! Cost: 10 Mana</button>
+		<br />
+		<button onclick="balanceTowardWater()" id="balanceWaterBtn" class="hidden">Balance Toward Water! Cost: 10 Mana</button>
+		<br />
+		<span id="balanceDisplay" class="hidden">Fire/Water Balance: <span id="fireWaterBalanceNum">50</span>/100</span>
+		<br />
+
 		<div id="makeBackgroundFullScreen"></div>
 	</div>
 
