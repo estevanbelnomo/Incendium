@@ -103,9 +103,16 @@ function gameLoop() {
 // Refresh all UI elements
 function refreshUI() {
     refreshMoney();
+
+    // Update resource displays
     document.getElementById("fireAspectNum").innerHTML = Math.floor(fire);
     document.getElementById("waterNum").innerHTML = Math.floor(water);
     document.getElementById("manaNum").innerHTML = Math.floor(mana) + "/" + manaMax;
+
+    // Update passive rate display
+    document.getElementById("passiveFireRate").innerHTML = Math.floor(passiveFireRate);
+    document.getElementById("passiveFireRateDisplay").innerHTML = Math.floor(passiveFireRate);
+    document.getElementById("passiveWaterRate").innerHTML = Math.floor(passiveWaterRate);
 
     // Format large numbers for display
     if (money >= 1000) {
@@ -113,6 +120,9 @@ function refreshUI() {
     } else {
         document.getElementById("moneyNum").innerHTML = Math.floor(money);
     }
+
+    // Update progress bars
+    updateProgressBars();
 }
 
 // Start the game loop
@@ -143,15 +153,9 @@ function buyShop() {
         if(loanChoice2 === "ASAP"){
             alert("OK Then! Let's Get Started!");
             money = 1000;
-            document.getElementById("buyShop").className += " hidden";
-            document.getElementById("background").className = "whiteBackground";
-            document.getElementById("title").className = "";
-            document.getElementById("getFire").className = "";
-            document.getElementById("money").className = "";
-            document.getElementById("fireAspect").className = "";
-            document.getElementById("sellFire").className = "";
-            document.getElementById("decisionUpgrade").className = "";
-            document.getElementById("manaDisplay").className = "";
+            document.getElementById("shopSection").style.display = "none";
+            document.getElementById("title").style.display = "";
+            showUIBasedOnProgress();
             refreshUI();
             return;
         }
@@ -272,22 +276,60 @@ function addColour(){
     document.getElementById("upgradeButtonAPI2").className = "yellowBackground";
 }
 
-// Function to show/hide UI based on progression
+// Update progress bars and indicators
+function updateProgressBars() {
+    // Mana progress bar
+    var manaPercent = (mana / manaMax) * 100;
+    var manaProgressEl = document.getElementById("manaProgress");
+    if (manaProgressEl) {
+        manaProgressEl.style.width = manaPercent + "%";
+    }
+
+    // Decision level progress bar
+    var progressPercent = (decisionLevel / 4) * 100;
+    var progressBarEl = document.getElementById("progressBar");
+    if (progressBarEl) {
+        progressBarEl.style.width = progressPercent + "%";
+    }
+
+    // Update decision level display
+    var levelDisplay = document.getElementById("decisionLevelDisplay");
+    if (levelDisplay) {
+        levelDisplay.innerHTML = decisionLevel + "/4";
+    }
+}
+
+// Function to show/hide UI sections based on progression
 function showUIBasedOnProgress() {
+    // Show fire section
+    document.getElementById("fireSection").style.display = "";
+    document.getElementById("progressionSection").style.display = "";
+    document.getElementById("progressStatItem").style.display = "";
+
+    // Decision Level 1: Fire Upgrades
     if (decisionLevel > 0) {
-        document.getElementById("upgradeFirePrice").className = "";
+        document.getElementById("fireUpgradesSection").style.display = "";
     }
+
+    // Decision Level 2: More fire upgrades visible
     if (decisionLevel > 1) {
-        document.getElementById("upgradeFirePerClick").className = "";
+        // Fire upgrades already visible
     }
+
+    // Decision Level 3: Wizard and Cosmetics
     if (decisionLevel > 2) {
-        document.getElementById("upgradeButtonAPI").className = "";
-        document.getElementById("hireWizard").className = "";
+        document.getElementById("wizardSection").style.display = "";
+        document.getElementById("cosmeticsSection").style.display = "";
+        document.getElementById("passiveRateItem").style.display = "";
     }
+
+    // Decision Level 4: Water, Mana, Balance
     if (decisionLevel > 3) {
-        document.getElementById("getWater").className = "";
-        document.getElementById("sellWater").className = "";
-        document.getElementById("manaPool").className = "";
+        document.getElementById("waterSection").style.display = "";
+        document.getElementById("manaSection").style.display = "";
+        document.getElementById("balanceSection").style.display = "";
+        document.getElementById("waterStatItem").style.display = "";
+        document.getElementById("manaStatItem").style.display = "";
     }
 }
 
