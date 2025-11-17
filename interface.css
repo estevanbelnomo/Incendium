@@ -142,9 +142,14 @@ body {
     border: 1px solid var(--border);
     border-radius: 12px;
     padding: 20px;
-    display: flex;
+    display: flex !important;
     flex-direction: column;
     gap: 12px;
+}
+
+/* Explicitly show shop section by default */
+#shopSection {
+    display: flex !important;
 }
 
 .section-title {

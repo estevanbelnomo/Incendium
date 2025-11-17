@@ -148,28 +148,53 @@ function refreshUI() {
 
 // Start the game loop
 window.addEventListener('load', function() {
-    var hasLoaded = loadGame();
-    if (hasLoaded) {
-        // Hide shop section and show game UI for loaded games
-        document.getElementById("shopSection").style.display = "none";
-        document.getElementById("title").style.display = "";
-        if (colour === "true") {
-            addColour();
+    try {
+        console.log("=== INCENDIUM GAME STARTING ===");
+        console.log("loadGame() starting...");
+        var hasLoaded = loadGame();
+        console.log("loadGame() result:", hasLoaded);
+
+        if (hasLoaded) {
+            console.log("Loaded existing game");
+            // Hide shop section and show game UI for loaded games
+            var shopSection = document.getElementById("shopSection");
+            if (shopSection) shopSection.style.display = "none";
+
+            var title = document.getElementById("title");
+            if (title) title.style.display = "";
+
+            if (colour === "true") {
+                addColour();
+            }
+            showUIBasedOnProgress();
+            refreshUI();
+        } else {
+            console.log("New game - showing shop section");
+            // For new games, show the start screen
+            var shopSection = document.getElementById("shopSection");
+            if (shopSection) {
+                shopSection.style.display = "flex";
+                console.log("Shop section displayed, current display:", window.getComputedStyle(shopSection).display);
+            } else {
+                console.error("ERROR: shopSection element not found!");
+            }
         }
-        showUIBasedOnProgress();
-        refreshUI();
-    } else {
-        // For new games, show the start screen
-        document.getElementById("shopSection").style.display = "";
+
+        console.log("Setting up autosave...");
+        // Set up autosave (wait 2 seconds before first save)
+        setTimeout(function() {
+            setInterval(saveGame, SAVE_INTERVAL);
+        }, 2000);
+
+        console.log("Starting game loop...");
+        // Set up game loop
+        setInterval(gameLoop, 50); // 20 ticks per second
+
+        console.log("=== INCENDIUM READY ===");
+    } catch (e) {
+        console.error("CRITICAL ERROR in game startup:", e);
+        console.error("Stack:", e.stack);
     }
-
-    // Set up autosave (wait 2 seconds before first save)
-    setTimeout(function() {
-        setInterval(saveGame, SAVE_INTERVAL);
-    }, 2000);
-
-    // Set up game loop
-    setInterval(gameLoop, 50); // 20 ticks per second
 });
 
 // When Buy Shop button is pressed at start of the game, this triggers.
